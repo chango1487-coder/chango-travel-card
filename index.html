@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#020617" />
+  <title>David Benavides Chang</title>
+  <link rel="icon" type="image/png" href="assets/chango-logo.png" />
+  <link rel="apple-touch-icon" href="assets/chango-logo.png" />
+  <meta name="apple-mobile-web-app-title" content="Chango" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;1,6..96,400;1,6..96,500;1,6..96,600&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="bg-slate-950 grain min-h-screen pb-24 text-white">
+
+  <!-- ====== LOADING ====== -->
+  <div id="loading" class="min-h-screen flex items-center justify-center">
+    <div class="text-slate-500 text-sm tracking-wider">Cargando…</div>
+  </div>
+
+  <!-- ====== LOGIN ====== -->
+  <div id="login" class="login-bg hidden min-h-screen flex flex-col items-center justify-end p-6 pb-12 fade-in">
+    <div class="w-full max-w-sm">
+      <div class="bg-slate-900/80 backdrop-blur rounded-2xl p-6 shadow-sm border border-slate-700">
+        <button id="signInBtn" class="w-full bg-sky-500 hover:bg-sky-400 text-white py-3.5 rounded-xl text-sm tracking-wide transition flex items-center justify-center gap-3">
+          <svg class="w-4 h-4" viewBox="0 0 24 24">
+            <path fill="#fff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" opacity=".9"/>
+            <path fill="#fff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" opacity=".8"/>
+            <path fill="#fff" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" opacity=".7"/>
+            <path fill="#fff" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" opacity=".95"/>
+          </svg>
+          Continuar con Google
+        </button>
+      </div>
+      <p class="text-xs text-slate-300 text-center mt-6 leading-relaxed">Acceso restringido al propietario.</p>
+    </div>
+  </div>
+
+  <!-- ====== ACCESS DENIED ====== -->
+  <div id="denied" class="hidden min-h-screen flex flex-col items-center justify-center p-6 fade-in">
+    <div class="w-full max-w-sm text-center">
+      <div class="w-14 h-14 rounded-full bg-red-950 border border-red-900 mx-auto mb-6 flex items-center justify-center">
+        <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/>
+        </svg>
+      </div>
+      <h1 class="font-display text-3xl italic text-white mb-2">Acceso denegado</h1>
+      <p class="text-slate-400 text-sm mb-8">Esta app está restringida a un único usuario.</p>
+      <button id="signOutDeniedBtn" class="text-sm text-sky-400 underline">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <!-- ====== APP ====== -->
+  <div id="app" class="hidden fade-in">
+    <header class="px-6 pt-8 pb-6 max-w-md mx-auto">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3 min-w-0">
+          <img src="assets/chango-logo.png" alt="Chango" class="w-10 h-10 rounded-full border border-slate-800 shrink-0" />
+          <div class="min-w-0">
+            <p class="text-xs uppercase tracking-widest text-slate-500">David Benavides Chang</p>
+            <h1 id="headerTitle" class="font-display text-3xl text-sky-400 italic mt-1 leading-tight">David — Commuter Card</h1>
+          </div>
+        </div>
+        <button id="signOutBtn" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition shrink-0" aria-label="Cerrar sesión">
+          <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="px-6 max-w-md mx-auto space-y-4">
+      <!-- Inicio -->
+      <section id="homeView" class="space-y-5">
+        <div class="pt-2">
+          <p id="homeGreeting" class="font-display text-3xl text-white italic leading-tight">Hola, David</p>
+          <p id="homeDate" class="text-xs uppercase tracking-widest text-slate-500 mt-1"></p>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <button onclick="goTo('card','dashboard')" class="bg-slate-900 rounded-2xl p-4 border border-slate-800 text-left hover:border-sky-500 transition">
+            <div class="flex items-center justify-between mb-3"><span class="text-2xl">🚇</span><svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg></div>
+            <p class="text-xs uppercase tracking-widest text-slate-400">Commuter Card</p>
+            <p id="homeTarjeta" class="font-mono text-lg text-sky-400 mt-1">—</p>
+          </button>
+          <button onclick="goTo('expenses','month')" class="bg-slate-900 rounded-2xl p-4 border border-slate-800 text-left hover:border-sky-500 transition">
+            <div class="flex items-center justify-between mb-3"><span class="text-2xl">💰</span><svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg></div>
+            <p class="text-xs uppercase tracking-widest text-slate-400">Gastos</p>
+            <p id="homeGastos" class="font-mono text-lg text-sky-400 mt-1">—</p>
+          </button>
+          <button onclick="goTo('expenses','savings')" class="bg-slate-900 rounded-2xl p-4 border border-slate-800 text-left hover:border-emerald-500 transition">
+            <div class="flex items-center justify-between mb-3"><span class="text-2xl">🐷</span><svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg></div>
+            <p class="text-xs uppercase tracking-widest text-slate-400">Ahorros</p>
+            <p id="homeAhorros" class="font-mono text-lg text-emerald-400 mt-1">—</p>
+          </button>
+          <button onclick="goTo('super')" class="bg-slate-900 rounded-2xl p-4 border border-slate-800 text-left hover:border-sky-500 transition">
+            <div class="flex items-center justify-between mb-3"><span class="text-2xl">🛒</span><svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg></div>
+            <p class="text-xs uppercase tracking-widest text-slate-400">Súper</p>
+            <p id="homeSuper" class="font-mono text-lg text-sky-400 mt-1">—</p>
+          </button>
+          <button onclick="goTo('todos')" class="bg-slate-900 rounded-2xl p-4 border border-slate-800 text-left hover:border-sky-500 transition">
+            <div class="flex items-center justify-between mb-3"><span class="text-2xl">✓</span><svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg></div>
+            <p class="text-xs uppercase tracking-widest text-slate-400">Tareas</p>
+            <p id="homeTareas" class="font-mono text-lg text-sky-400 mt-1">—</p>
+          </button>
+          <button onclick="goTo('gym','entreno')" class="bg-slate-900 rounded-2xl p-4 border border-slate-800 text-left hover:border-sky-500 transition">
+            <div class="flex items-center justify-between mb-3"><span class="text-2xl">🏋️</span><svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg></div>
+            <p class="text-xs uppercase tracking-widest text-slate-400">Gimnasio</p>
+            <p id="homeGym" class="font-mono text-lg text-sky-400 mt-1">—</p>
+          </button>
+          <button onclick="goTo('worldcup','calendar')" class="bg-slate-900 rounded-2xl p-4 border border-slate-800 text-left hover:border-sky-500 transition">
+            <div class="flex items-center justify-between mb-3"><span class="text-2xl">🏆</span><svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg></div>
+            <p class="text-xs uppercase tracking-widest text-slate-400">Mundial</p>
+            <p id="homeWc" class="font-mono text-lg text-sky-400 mt-1">2026</p>
+          </button>
+        </div>
+      </section>
+
+      <!-- Tarjeta (Resumen + Historial) -->
+      <section id="cardView" class="hidden space-y-4">
+        <!-- Selector de tarjetas (pills) -->
+        <div id="cardTabs" class="flex items-center gap-2 overflow-x-auto pb-1"></div>
+
+        <!-- Segmented control -->
+        <div class="bg-slate-900 border border-slate-800 rounded-full p-1 flex">
+          <button data-subview="dashboard" class="card-sub-btn flex-1 py-2.5 rounded-full text-xs font-medium transition bg-sky-500 text-white">Resumen</button>
+          <button data-subview="history" class="card-sub-btn flex-1 py-2.5 rounded-full text-xs font-medium transition text-slate-400">Historial</button>
+          <button data-subview="settings" class="card-sub-btn flex-1 py-2.5 rounded-full text-xs font-medium transition text-slate-400">Ajustes</button>
+        </div>
+
+        <!-- Resumen sub-view -->
+        <div id="dashboardSubview" class="space-y-4">
+        <div id="expirationBadge" class="hidden rounded-2xl px-4 py-3 flex items-center justify-between border">
+          <div class="flex items-center gap-2.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
+            </svg>
+            <span id="expirationText" class="text-sm font-medium"></span>
+          </div>
+          <span id="expirationDate" class="text-xs font-mono opacity-80"></span>
+        </div>
+
+        <div id="heroCard" class="rounded-2xl p-6 bg-slate-900 border border-slate-800">
+          <p id="heroLabel" class="text-xs uppercase tracking-widest mb-2 text-slate-400">Falta para amortizar</p>
+          <div class="flex items-baseline gap-2">
+            <span id="heroValue" class="font-mono text-5xl text-sky-400" style="font-weight: 500;">0</span>
+            <span id="heroCurrency" class="text-lg text-slate-500">DKK</span>
+          </div>
+          <div class="mt-5">
+            <div id="progressTrack" class="h-1.5 rounded-full overflow-hidden bg-slate-800">
+              <div id="progressFill" class="progress-bar h-full bg-sky-400" style="width: 0%"></div>
+            </div>
+            <div class="flex justify-between mt-2">
+              <span id="progressText" class="text-xs text-slate-500">0 de 0 viajes</span>
+              <span id="progressPct" class="text-xs font-mono text-slate-500">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800">
+            <p class="text-xs uppercase tracking-widest text-slate-400 mb-2">Viajes</p>
+            <p id="statTrips" class="font-mono text-3xl text-sky-400">0</p>
+          </div>
+          <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800">
+            <p class="text-xs uppercase tracking-widest text-slate-400 mb-2">Coste/viaje</p>
+            <p class="font-mono text-3xl text-sky-400">
+              <span id="statCost">—</span><span class="text-sm text-slate-500 ml-1">kr</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800">
+          <p class="text-xs uppercase tracking-widest text-slate-400 mb-3">Resumen</p>
+          <div class="space-y-2.5 text-sm">
+            <div class="flex justify-between"><span class="text-slate-400">Coste tarjeta</span><span id="sumCard" class="font-mono text-white">—</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Valor en billetes</span><span id="sumValue" class="font-mono text-white">—</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Billetes extra</span><span id="sumExtra" class="font-mono text-amber-400">—</span></div>
+            <div class="flex justify-between"><span class="text-white">Total gastado</span><span id="sumTotal" class="font-mono text-white font-medium">—</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Punto de equilibrio</span><span id="sumBreakeven" class="font-mono text-white">—</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Caducidad</span><span id="sumExpiration" class="font-mono text-white">—</span></div>
+            <div class="pt-2.5 border-t border-slate-800 flex justify-between">
+              <span class="text-white">Estado</span>
+              <span id="sumStatus" class="font-medium text-amber-400">○ Aún no</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Historial sub-view (dentro de Tarjeta) -->
+      <div id="historySubview" class="hidden space-y-3">
+        <p id="historyCount" class="text-xs uppercase tracking-widest text-slate-400 px-1">0 viajes registrados</p>
+        <div id="tripsList" class="space-y-3"></div>
+      </div>
+
+      <!-- Ajustes sub-view (dentro de Tarjeta) -->
+      <div id="settingsSubview" class="hidden space-y-3">
+        <div id="cardSettingsForm" class="bg-slate-900 rounded-2xl p-5 border border-slate-800 space-y-4">
+          <p class="text-xs uppercase tracking-widest text-slate-400">Parámetros de la tarjeta</p>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5">Nombre</label>
+            <input id="setCardName" type="text" placeholder="Ej: Commuter Q1" class="w-full px-3 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none text-white placeholder:text-slate-600" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5">Coste de la tarjeta (DKK)</label>
+            <input id="setCardCost" type="number" class="w-full px-3 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5">Precio billete suelto (DKK)</label>
+            <input id="setTicketPrice" type="number" class="w-full px-3 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5">Fecha de inicio</label>
+            <input id="setStartDate" type="date" class="w-full px-3 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5">Caducidad (opcional)</label>
+            <input id="setExpiration" type="date" class="w-full px-3 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white" />
+          </div>
+        </div>
+
+        <!-- Viajes sin asignar: reasignar a una tarjeta -->
+        <div id="unassignedSettings" class="hidden bg-slate-900 rounded-2xl p-5 border border-slate-800 space-y-4">
+          <p class="text-xs uppercase tracking-widest text-slate-400">Viajes sin asignar</p>
+          <p class="text-xs text-slate-500 leading-relaxed">Estos viajes no pertenecen a ninguna tarjeta. Elige una para asignarlos todos.</p>
+          <select id="reassignCardSelect" class="w-full px-3 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none text-white text-sm"></select>
+          <button id="reassignBtn" class="w-full bg-sky-500 hover:bg-sky-400 text-white py-2.5 rounded-lg text-sm tracking-wide transition">Asignar todos</button>
+        </div>
+
+        <button id="deleteCardBtn" class="w-full bg-red-950 hover:bg-red-900 text-red-300 py-3 rounded-xl text-sm font-medium tracking-wide transition">Borrar esta tarjeta</button>
+        <p class="text-xs text-slate-500 px-2 leading-relaxed">Los cambios se guardan automáticamente.</p>
+      </div>
+      </section>
+
+      <!-- Todos -->
+      <section id="todosView" class="hidden space-y-3">
+        <div class="bg-slate-900 rounded-2xl p-4 border border-slate-800 space-y-3">
+          <div class="flex gap-2">
+            <input id="newTodoInput" type="text" placeholder="Añadir tarea…" class="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 text-white placeholder:text-slate-600 focus:border-sky-500 outline-none" />
+            <button id="addTodoBtn" class="bg-sky-500 hover:bg-sky-400 text-white px-4 rounded-lg transition flex items-center justify-center" aria-label="Añadir">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+            </button>
+          </div>
+          <div class="flex items-center gap-2 px-1">
+            <svg class="w-4 h-4 text-slate-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
+            <input id="newTodoDueDate" type="date" class="bg-transparent text-xs text-slate-400 focus:text-white outline-none font-mono flex-1" />
+            <button id="clearDueDateBtn" type="button" class="hidden text-xs text-slate-500 hover:text-sky-400 transition">limpiar</button>
+          </div>
+        </div>
+        <p id="todoStats" class="text-xs uppercase tracking-widest text-slate-400 px-1">0 pendientes</p>
+        <div id="todosList" class="space-y-2"></div>
+      </section>
+
+      <!-- Gastos -->
+      <section id="expensesView" class="hidden space-y-4">
+        <!-- Segmented control -->
+        <div class="bg-slate-900 border border-slate-800 rounded-full p-1 flex">
+          <button data-expsub="month" class="exp-sub-btn flex-1 py-2.5 rounded-full text-xs font-medium transition bg-sky-500 text-white">Mes</button>
+          <button data-expsub="history" class="exp-sub-btn flex-1 py-2.5 rounded-full text-xs font-medium transition text-slate-400">Historial</button>
+          <button data-expsub="savings" class="exp-sub-btn flex-1 py-2.5 rounded-full text-xs font-medium transition text-slate-400">Ahorros</button>
+          <button data-expsub="settings" class="exp-sub-btn flex-1 py-2.5 rounded-full text-xs font-medium transition text-slate-400">Ajustes</button>
+        </div>
+
+        <!-- Mes sub-view -->
+        <div id="expMonthSubview" class="space-y-4">
+          <div id="budgetHero" class="rounded-2xl p-6 bg-slate-900 border border-slate-800">
+            <p id="budgetLabel" class="text-xs uppercase tracking-widest mb-2 text-slate-400">Gastado este mes</p>
+            <div class="flex items-baseline gap-2">
+              <span id="budgetValue" class="font-mono text-5xl text-sky-400" style="font-weight:500;">0</span>
+              <span class="text-lg text-slate-500">DKK</span>
+            </div>
+            <div class="mt-5">
+              <div id="budgetTrack" class="h-1.5 rounded-full overflow-hidden bg-slate-800">
+                <div id="budgetFill" class="progress-bar h-full bg-sky-400" style="width:0%"></div>
+              </div>
+              <div class="flex justify-between mt-2">
+                <span id="budgetSpentText" class="text-xs text-slate-500">0 DKK</span>
+                <span id="budgetPct" class="text-xs font-mono text-slate-500">0%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800">
+            <p class="text-xs uppercase tracking-widest text-slate-400 mb-3">Desglose del mes</p>
+            <div class="space-y-2.5 text-sm">
+              <div class="flex justify-between"><span class="text-slate-400">Presupuesto</span><span id="dsBudget" class="font-mono text-white">—</span></div>
+              <div class="flex justify-between"><span class="text-slate-400">Gastos fijos</span><span id="dsFixed" class="font-mono text-white">—</span></div>
+              <div class="flex justify-between"><span class="text-slate-400">Gastos variables</span><span id="dsVariable" class="font-mono text-white">—</span></div>
+              <div class="flex justify-between"><span class="text-slate-400">Total gastado</span><span id="dsSpent" class="font-mono text-white">—</span></div>
+              <div class="pt-2.5 border-t border-slate-800 flex justify-between">
+                <span class="text-white">Disponible</span>
+                <span id="dsRemaining" class="font-mono font-medium text-emerald-400">—</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800">
+            <p class="text-xs uppercase tracking-widest text-slate-400 mb-3">Por categoría</p>
+            <div id="categoryBreakdown" class="space-y-3"></div>
+          </div>
+        </div>
+
+        <!-- Historial sub-view -->
+        <div id="expHistorySubview" class="hidden space-y-3">
+          <p id="expHistoryCount" class="text-xs uppercase tracking-widest text-slate-400 px-1">0 gastos</p>
+          <div id="expensesList" class="space-y-2"></div>
+        </div>
+
+        <!-- Ahorros sub-view -->
+        <div id="expSavingsSubview" class="hidden space-y-4">
+          <div class="rounded-2xl p-6 bg-slate-900 border border-slate-800">
+            <p id="savingsLabel" class="text-xs uppercase tracking-widest mb-2 text-slate-400">Total ahorrado</p>
+            <div class="flex items-baseline gap-2">
+              <span id="savingsValue" class="font-mono text-5xl text-emerald-400" style="font-weight:500;">0</span>
+              <span class="text-lg text-slate-500">DKK</span>
+            </div>
+            <div id="savingsGoalWrap" class="mt-5 hidden">
+              <div class="h-1.5 rounded-full overflow-hidden bg-slate-800">
+                <div id="savingsFill" class="progress-bar h-full bg-emerald-400" style="width:0%"></div>
+              </div>
+              <div class="flex justify-between mt-2">
+                <span id="savingsGoalText" class="text-xs text-slate-500">0 de 0 DKK</span>
+                <span id="savingsPct" class="text-xs font-mono text-slate-500">0%</span>
+              </div>
+            </div>
+          </div>
+          <button id="addSavingInlineBtn" class="w-full bg-emerald-500 hover:bg-emerald-400 text-white py-3 rounded-xl text-sm font-medium tracking-wide transition flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+            Añadir ahorro
+          </button>
+
+          <div class="flex items-center justify-between px-1 pt-1">
+            <p class="text-xs uppercase tracking-widest text-slate-400">Mis carteras</p>
+            <button id="addWalletBtn" class="text-xs text-emerald-400 hover:text-emerald-300 transition">+ Nueva</button>
+          </div>
+          <div id="walletsList" class="space-y-2"></div>
+
+          <p id="savingsCount" class="text-xs uppercase tracking-widest text-slate-400 px-1 pt-1">0 aportes</p>
+          <div id="savingsList" class="space-y-2"></div>
+        </div>
+
+        <!-- Ajustes sub-view -->
+        <div id="expSettingsSubview" class="hidden space-y-3">
+          <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800 space-y-4">
+            <p class="text-xs uppercase tracking-widest text-slate-400">Presupuesto</p>
+            <div>
+              <label class="text-xs text-slate-400 block mb-1.5">Presupuesto mensual (DKK)</label>
+              <input id="setBudget" type="number" placeholder="Ej: 8000" class="w-full px-3 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white" />
+            </div>
+          </div>
+
+          <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800 space-y-4">
+            <div class="flex items-center justify-between">
+              <p class="text-xs uppercase tracking-widest text-slate-400">Gastos fijos mensuales</p>
+              <span id="fixedTotal" class="text-xs font-mono text-slate-400">0 kr/mes</span>
+            </div>
+            <div class="space-y-2">
+              <input id="newFixedName" type="text" placeholder="Nombre (ej: Alquiler)" class="w-full px-3 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none text-white placeholder:text-slate-600" />
+              <div class="flex gap-2">
+                <input id="newFixedAmount" type="number" inputmode="decimal" placeholder="Importe" class="flex-1 min-w-0 px-3 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white placeholder:text-slate-600" />
+                <select id="newFixedCurrency" class="cur-select px-3 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none text-white font-mono text-sm"></select>
+              </div>
+              <select id="newFixedCategory" class="w-full px-3 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none text-white text-sm"></select>
+              <p id="newFixedConverted" class="text-xs text-sky-400 font-mono h-4 px-1"></p>
+              <button id="addFixedBtn" class="w-full bg-sky-500 hover:bg-sky-400 text-white py-2.5 rounded-lg text-sm tracking-wide transition">+ Añadir gasto fijo</button>
+            </div>
+            <div id="fixedList" class="space-y-2"></div>
+          </div>
+          <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800 space-y-4">
+            <p class="text-xs uppercase tracking-widest text-slate-400">Ahorro</p>
+            <div>
+              <label class="text-xs text-slate-400 block mb-1.5">Meta de ahorro (objetivo, no es tu saldo)</label>
+              <input id="setSavingsGoal" type="number" placeholder="Ej: 50000" class="w-full px-3 py-2.5 rounded-lg bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white" />
+              <p class="text-xs text-slate-500 mt-1.5">Para registrar dinero ahorrado, ve a la pestaña Ahorros y pulsa "Añadir ahorro".</p>
+            </div>
+          </div>
+          <p class="text-xs text-slate-500 px-2 leading-relaxed">Los gastos fijos se cuentan automáticamente cada mes, sumados a tus gastos variables.</p>
+        </div>
+      </section>
+
+      <!-- Súper -->
+      <section id="superView" class="hidden space-y-4">
+        <div id="supermarketTabs" class="flex items-center gap-2 overflow-x-auto pb-1"></div>
+
+        <div id="superEmpty" class="hidden bg-slate-900 rounded-2xl p-10 border border-slate-800 text-center">
+          <p class="text-slate-400 text-sm">Crea tu primer supermercado con "+ Nuevo".</p>
+        </div>
+
+        <div id="superContent" class="space-y-4">
+          <div class="bg-slate-900 rounded-2xl p-4 border border-slate-800">
+            <div class="flex gap-2">
+              <input id="newShopName" type="text" placeholder="Añadir producto…" class="flex-1 min-w-0 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 text-white placeholder:text-slate-600 focus:border-sky-500 outline-none" />
+              <input id="newShopQty" type="text" placeholder="Cant." class="w-16 bg-slate-950 border border-slate-800 rounded-lg px-2 py-2.5 text-white placeholder:text-slate-600 focus:border-sky-500 outline-none text-center text-sm" />
+              <button id="addShopBtn" class="bg-sky-500 hover:bg-sky-400 text-white px-4 rounded-lg transition flex items-center justify-center shrink-0" aria-label="Añadir">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="flex items-center justify-between px-1">
+            <p id="shopStats" class="text-xs uppercase tracking-widest text-slate-400">0 productos</p>
+            <button id="deleteSupermarketBtn" class="text-xs text-slate-500 hover:text-red-400 transition">Borrar supermercado</button>
+          </div>
+          <div id="shopList" class="space-y-1.5"></div>
+        </div>
+      </section>
+
+      <!-- Gimnasio -->
+      <section id="gymView" class="hidden space-y-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-full p-1 flex">
+          <button data-gymsub="entreno" class="gym-sub-btn flex-1 py-2.5 rounded-full text-xs font-medium transition bg-sky-500 text-white">Entreno</button>
+          <button data-gymsub="progress" class="gym-sub-btn flex-1 py-2.5 rounded-full text-xs font-medium transition text-slate-400">Progreso</button>
+        </div>
+
+        <!-- Entreno (rutina + asistencia juntos) -->
+        <div id="gymEntrenoSubview" class="space-y-4">
+          <div class="rounded-2xl p-6 bg-slate-900 border border-slate-800">
+            <p class="text-xs uppercase tracking-widest mb-2 text-slate-400">Racha actual</p>
+            <div class="flex items-baseline gap-2">
+              <span id="gymStreak" class="font-mono text-5xl text-sky-400" style="font-weight:500;">0</span>
+              <span class="text-lg text-slate-500">días seguidos</span>
+            </div>
+            <p id="gymMonthCount" class="text-xs text-slate-500 mt-3 font-mono">0 entrenos este mes</p>
+          </div>
+
+          <div class="rounded-2xl p-4 bg-slate-900 border border-slate-800 space-y-4">
+            <div class="flex items-end justify-between gap-3">
+              <div class="flex-1">
+                <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Día</label>
+                <input id="gymEntrenoDate" type="date" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white" />
+              </div>
+              <div>
+                <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Peso kg</label>
+                <input id="gymEntrenoWeight" type="number" inputmode="decimal" placeholder="—" class="w-24 px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white text-center" />
+              </div>
+            </div>
+            <p id="gymDayBadge" class="hidden text-xs font-medium text-emerald-400">✓ Día registrado</p>
+
+            <button id="addExerciseBtn" class="w-full bg-sky-500 hover:bg-sky-400 text-white py-3 rounded-xl text-sm font-medium tracking-wide transition flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+              Añadir ejercicio
+            </button>
+            <div id="gymExercisesList" class="space-y-2"></div>
+          </div>
+
+          <div>
+            <p class="text-xs uppercase tracking-widest text-slate-400 px-1 mb-2">Últimos días</p>
+            <div id="gymRecentList" class="space-y-2"></div>
+          </div>
+        </div>
+
+        <!-- Progreso (peso + calendario) -->
+        <div id="gymProgressSubview" class="hidden space-y-4">
+          <div class="rounded-2xl p-6 bg-slate-900 border border-slate-800">
+            <p class="text-xs uppercase tracking-widest mb-2 text-slate-400">Peso actual</p>
+            <div class="flex items-baseline gap-2">
+              <span id="currentWeight" class="font-mono text-5xl text-sky-400" style="font-weight:500;">—</span>
+              <span class="text-lg text-slate-500">kg</span>
+            </div>
+            <p id="weightChange" class="text-xs mt-3 font-mono text-slate-500"></p>
+          </div>
+
+          <div class="rounded-2xl p-4 bg-slate-900 border border-slate-800">
+            <div class="flex items-center justify-between mb-4">
+              <button id="gymCalPrev" class="w-9 h-9 rounded-full hover:bg-slate-800 flex items-center justify-center transition" aria-label="Mes anterior">
+                <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+              </button>
+              <p id="gymCalLabel" class="text-sm font-medium text-white capitalize">—</p>
+              <button id="gymCalNext" class="w-9 h-9 rounded-full hover:bg-slate-800 flex items-center justify-center transition" aria-label="Mes siguiente">
+                <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+              </button>
+            </div>
+            <div class="grid grid-cols-7 gap-1.5 mb-1.5">
+              <div class="text-center text-[10px] uppercase tracking-wider text-slate-500">L</div>
+              <div class="text-center text-[10px] uppercase tracking-wider text-slate-500">M</div>
+              <div class="text-center text-[10px] uppercase tracking-wider text-slate-500">X</div>
+              <div class="text-center text-[10px] uppercase tracking-wider text-slate-500">J</div>
+              <div class="text-center text-[10px] uppercase tracking-wider text-slate-500">V</div>
+              <div class="text-center text-[10px] uppercase tracking-wider text-slate-500">S</div>
+              <div class="text-center text-[10px] uppercase tracking-wider text-slate-500">D</div>
+            </div>
+            <div id="gymCalGrid" class="grid grid-cols-7 gap-1.5"></div>
+            <p class="text-xs text-slate-500 mt-4 text-center">Toca un día azul para ver el entreno. Toca un día vacío para registrarlo.</p>
+          </div>
+
+          <button id="exportGymBtn" class="w-full bg-slate-900 hover:border-sky-500 text-sky-400 border border-slate-800 py-3 rounded-xl text-sm font-medium tracking-wide transition flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+            Exportar a CSV
+          </button>
+        </div>
+      </section>
+
+      <!-- Mundial -->
+      <section id="worldcupView" class="hidden space-y-4">
+        <select id="wcYear" class="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-slate-800 focus:border-sky-500 outline-none text-white font-mono text-sm"></select>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-full p-1 flex">
+          <button data-wcsub="calendar" class="wc-sub-btn flex-1 py-2.5 rounded-full text-xs font-medium transition bg-sky-500 text-white">Calendario</button>
+          <button data-wcsub="groups" class="wc-sub-btn flex-1 py-2.5 rounded-full text-xs font-medium transition text-slate-400">Grupos</button>
+        </div>
+
+        <div class="flex items-center justify-between px-1">
+          <span id="wcStatus" class="text-xs text-slate-500"></span>
+          <button id="wcRefreshBtn" class="text-xs text-sky-400 hover:text-sky-300 transition flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992V4.356M3.985 19.644v-4.992h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+            Refrescar
+          </button>
+        </div>
+
+        <div id="wcCalendarSubview" class="space-y-2">
+          <select id="wcTeam" class="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-slate-800 focus:border-sky-500 outline-none text-white text-sm"><option value="">Todas las selecciones</option></select>
+          <div id="wcList" class="space-y-1.5"></div>
+        </div>
+        <div id="wcGroupsSubview" class="hidden space-y-3">
+          <div id="wcGroups" class="space-y-3"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FAB -->
+    <button id="addBtn" class="fixed bottom-24 right-6 w-14 h-14 rounded-full bg-sky-500 hover:bg-sky-400 text-white glow flex items-center justify-center transition z-10">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+      </svg>
+    </button>
+
+    <!-- Bottom nav -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur border-t border-slate-800 z-10">
+      <div class="max-w-md mx-auto px-3 py-3 flex justify-around">
+        <button data-view="home" class="nav-btn flex flex-col items-center gap-1 px-2 py-1 transition text-sky-400">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+          <span class="text-[10px] tracking-wider uppercase">Inicio</span>
+        </button>
+        <button data-view="card" class="nav-btn flex flex-col items-center gap-1 px-2 py-1 transition text-slate-500">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/></svg>
+          <span class="text-[10px] tracking-wider uppercase">Commuter</span>
+        </button>
+        <button data-view="expenses" class="nav-btn flex flex-col items-center gap-1 px-2 py-1 transition text-slate-500">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/></svg>
+          <span class="text-[10px] tracking-wider uppercase">Gastos</span>
+        </button>
+        <button data-view="super" class="nav-btn flex flex-col items-center gap-1 px-2 py-1 transition text-slate-500">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/></svg>
+          <span class="text-[10px] tracking-wider uppercase">Súper</span>
+        </button>
+        <button data-view="todos" class="nav-btn flex flex-col items-center gap-1 px-2 py-1 transition text-slate-500">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span class="text-[10px] tracking-wider uppercase">Tareas</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Add modal -->
+    <div id="addModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-4">
+      <div id="addModalContent" class="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-md">
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <p class="text-xs uppercase tracking-widest text-slate-400 mb-1">Nuevo</p>
+            <h2 id="addModalTitle" class="font-display text-2xl text-sky-400 italic">Registrar viaje</h2>
+          </div>
+          <button id="closeModalBtn" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition">
+            <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="space-y-4">
+          <div class="bg-slate-950 border border-slate-800 rounded-full p-1 flex">
+            <button type="button" id="tripTypeTrip" class="flex-1 py-2 rounded-full text-xs font-medium transition bg-sky-500 text-white">Viaje</button>
+            <button type="button" id="tripTypeExtra" class="flex-1 py-2 rounded-full text-xs font-medium transition text-slate-400">Billete extra</button>
+          </div>
+          <p id="addTripCardLabel" class="text-xs text-slate-500 -mt-1"></p>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Fecha</label>
+            <input id="newTripDate" type="date" class="w-full px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white" />
+          </div>
+          <div id="extraAmountWrap" class="hidden">
+            <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Importe del billete (DKK)</label>
+            <input id="newTripCost" type="number" inputmode="decimal" placeholder="0" class="w-full px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Nota (opcional)</label>
+            <input id="newTripNote" type="text" placeholder="Ej: Nørreport → Kongens Nytorv" class="w-full px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none text-white placeholder:text-slate-600" />
+          </div>
+          <button id="confirmAddBtn" class="w-full bg-sky-500 hover:bg-sky-400 text-white py-3.5 rounded-xl tracking-wide transition mt-2">Añadir viaje</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- New card modal -->
+    <div id="cardModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-md">
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <p class="text-xs uppercase tracking-widest text-slate-400 mb-1">Nueva</p>
+            <h2 class="font-display text-2xl text-sky-400 italic">Tarjeta</h2>
+          </div>
+          <button id="closeCardBtn" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition">
+            <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Nombre</label>
+            <input id="newCardName" type="text" placeholder="Ej: Commuter Q1" class="w-full px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none text-white placeholder:text-slate-600" />
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Coste (DKK)</label>
+              <input id="newCardCost" type="number" inputmode="decimal" placeholder="600" class="w-full px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white" />
+            </div>
+            <div>
+              <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Billete (DKK)</label>
+              <input id="newCardTicket" type="number" inputmode="decimal" placeholder="24" class="w-full px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white" />
+            </div>
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Fecha de inicio</label>
+            <input id="newCardStart" type="date" class="w-full px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Caducidad (opcional)</label>
+            <input id="newCardExpiration" type="date" class="w-full px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white" />
+          </div>
+          <button id="confirmCardBtn" class="w-full bg-sky-500 hover:bg-sky-400 text-white py-3.5 rounded-xl tracking-wide transition mt-2">Crear tarjeta</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expense modal -->
+    <div id="expenseModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-md">
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <p class="text-xs uppercase tracking-widest text-slate-400 mb-1">Nuevo</p>
+            <h2 class="font-display text-2xl text-sky-400 italic">Registrar gasto</h2>
+          </div>
+          <button id="closeExpenseBtn" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition">
+            <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Importe</label>
+            <div class="flex gap-2">
+              <input id="newExpAmount" type="number" inputmode="decimal" placeholder="0" class="flex-1 min-w-0 px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white text-2xl" />
+              <select id="newExpCurrency" class="cur-select px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none text-white font-mono"></select>
+            </div>
+            <p id="newExpConverted" class="text-xs text-sky-400 mt-1.5 font-mono h-4"></p>
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Categoría</label>
+            <div id="categoryPicker" class="grid grid-cols-4 gap-2"></div>
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Fecha</label>
+            <input id="newExpDate" type="date" class="w-full px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Nota (opcional)</label>
+            <input id="newExpNote" type="text" placeholder="Ej: Cena con amigos" class="w-full px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none text-white placeholder:text-slate-600" />
+          </div>
+          <button id="confirmExpenseBtn" class="w-full bg-sky-500 hover:bg-sky-400 text-white py-3.5 rounded-xl tracking-wide transition mt-2">Añadir gasto</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Savings modal -->
+    <div id="savingsModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-md">
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <p class="text-xs uppercase tracking-widest text-slate-400 mb-1">Nuevo</p>
+            <h2 class="font-display text-2xl text-emerald-400 italic">Registrar ahorro</h2>
+          </div>
+          <button id="closeSavingsBtn" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition">
+            <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Importe</label>
+            <div class="flex gap-2">
+              <input id="newSavingAmount" type="number" inputmode="decimal" placeholder="0" class="flex-1 min-w-0 px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-emerald-500 outline-none font-mono text-white text-2xl" />
+              <select id="newSavingCurrency" class="cur-select px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-emerald-500 outline-none text-white font-mono"></select>
+            </div>
+            <p id="newSavingConverted" class="text-xs text-emerald-400 mt-1.5 font-mono h-4"></p>
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Cartera</label>
+            <select id="newSavingWallet" class="w-full px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-emerald-500 outline-none text-white"></select>
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Fecha</label>
+            <input id="newSavingDate" type="date" class="w-full px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-emerald-500 outline-none font-mono text-white" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Nota (opcional)</label>
+            <input id="newSavingNote" type="text" placeholder="Ej: Fondo de emergencia" class="w-full px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-emerald-500 outline-none text-white placeholder:text-slate-600" />
+          </div>
+          <button id="confirmSavingBtn" class="w-full bg-emerald-500 hover:bg-emerald-400 text-white py-3.5 rounded-xl tracking-wide transition mt-2">Añadir ahorro</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wallet modal -->
+    <div id="walletModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-md">
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <p class="text-xs uppercase tracking-widest text-slate-400 mb-1">Nueva</p>
+            <h2 class="font-display text-2xl text-emerald-400 italic">Cartera</h2>
+          </div>
+          <button id="closeWalletBtn" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition">
+            <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Nombre</label>
+            <input id="newWalletName" type="text" placeholder="Ej: Fondo de emergencia" class="w-full px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-emerald-500 outline-none text-white placeholder:text-slate-600" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Icono</label>
+            <div id="walletEmojiPicker" class="grid grid-cols-5 gap-2"></div>
+          </div>
+          <button id="confirmWalletBtn" class="w-full bg-emerald-500 hover:bg-emerald-400 text-white py-3.5 rounded-xl tracking-wide transition mt-2">Crear cartera</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Supermarket modal -->
+    <div id="supermarketModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-md">
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <p class="text-xs uppercase tracking-widest text-slate-400 mb-1">Nuevo</p>
+            <h2 class="font-display text-2xl text-sky-400 italic">Supermercado</h2>
+          </div>
+          <button id="closeSupermarketBtn" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition">
+            <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Nombre</label>
+            <input id="newSupermarketName" type="text" placeholder="Ej: Netto, Føtex, Rema 1000" class="w-full px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none text-white placeholder:text-slate-600" />
+          </div>
+          <button id="confirmSupermarketBtn" class="w-full bg-sky-500 hover:bg-sky-400 text-white py-3.5 rounded-xl tracking-wide transition mt-2">Crear supermercado</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exercise modal (añadir/editar ejercicio del día) -->
+    <div id="exerciseModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-md">
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <p class="text-xs uppercase tracking-widest text-slate-400 mb-1">Ejercicio</p>
+            <h2 id="exerciseModalTitle" class="font-display text-2xl text-sky-400 italic">Añadir</h2>
+          </div>
+          <button id="closeExerciseBtn" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition">
+            <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Ejercicio</label>
+            <input id="exName" type="text" placeholder="Ej: Press banca" class="w-full px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none text-white placeholder:text-slate-600" />
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            <div>
+              <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Series</label>
+              <input id="exSets" type="number" inputmode="numeric" placeholder="4" class="w-full px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white text-center" />
+            </div>
+            <div>
+              <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Repes</label>
+              <input id="exReps" type="number" inputmode="numeric" placeholder="10" class="w-full px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white text-center" />
+            </div>
+            <div>
+              <label class="text-xs text-slate-400 block mb-1.5 uppercase tracking-wider">Peso kg</label>
+              <input id="exWeight" type="number" inputmode="decimal" placeholder="60" class="w-full px-3 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-sky-500 outline-none font-mono text-white text-center" />
+            </div>
+          </div>
+          <button id="confirmExerciseBtn" class="w-full bg-sky-500 hover:bg-sky-400 text-white py-3.5 rounded-xl tracking-wide transition mt-2">Guardar ejercicio</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day modal (detalle de un día del calendario) -->
+    <div id="dayModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-md">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <p class="text-xs uppercase tracking-widest text-slate-400 mb-1">Sesión</p>
+            <h2 id="dayModalTitle" class="font-display text-2xl text-sky-400 italic capitalize">—</h2>
+          </div>
+          <button id="closeDayBtn" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition">
+            <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <p id="dayModalWeight" class="text-sm text-slate-300 font-mono mb-3"></p>
+        <div id="dayModalExercises" class="space-y-2 mb-5"></div>
+        <div class="flex gap-2">
+          <button id="dayEditBtn" class="flex-1 bg-sky-500 hover:bg-sky-400 text-white py-3 rounded-xl text-sm font-medium tracking-wide transition">Editar</button>
+          <button id="dayDeleteBtn" class="px-4 bg-red-950 hover:bg-red-900 text-red-300 py-3 rounded-xl text-sm font-medium tracking-wide transition">Borrar día</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase (módulo): expone las funciones como globales y arranca la app -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, addDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+    Object.assign(window, { initializeApp, getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, getFirestore, doc, getDoc, setDoc, collection, addDoc, deleteDoc, onSnapshot, query, orderBy });
+    window.__firebaseReady = true;
+    if (window.__startApp) window.__startApp();
+  </script>
+  <!-- App (scripts clásicos, ámbito global compartido) -->
+  <script defer src="js/state.js"></script>
+  <script defer src="js/auth.js"></script>
+  <script defer src="js/core.js"></script>
+  <script defer src="js/money.js"></script>
+  <script defer src="js/card.js"></script>
+  <script defer src="js/lists.js"></script>
+  <script defer src="js/gym.js"></script>
+  <script defer src="js/worldcup.js"></script>
+  <script defer src="js/main.js"></script>
+</body>
+</html>

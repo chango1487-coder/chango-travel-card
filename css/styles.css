@@ -1,0 +1,22 @@
+body { font-family: 'Geist', system-ui, sans-serif; -webkit-font-smoothing: antialiased; background-color: #020617; }
+.font-display { font-family: 'Bodoni Moda', 'Times New Roman', serif; font-optical-sizing: auto; letter-spacing: -0.01em; }
+.font-mono { font-family: 'Geist Mono', monospace; }
+.grain {
+  background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.035) 1px, transparent 0);
+  background-size: 22px 22px;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"] { -moz-appearance: textfield; }
+input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7); }
+.fade-in { animation: fadeIn 0.4s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.progress-bar { transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+.glow { box-shadow: 0 0 40px -10px rgba(56, 189, 248, 0.4); }
+.login-bg {
+  background-color: #1a202c;
+  background-image: linear-gradient(to bottom, rgba(26,32,44,0) 50%, rgba(26,32,44,0.9) 100%), url('../assets/login-bg.jpg');
+  background-size: cover, contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
